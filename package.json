@@ -1,0 +1,13 @@
+{
+  "name": "postgres-backup",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.569.0",
+    "@aws-sdk/lib-storage": "^3.569.0",
+    "envsafe": "^2.0.3",
+    "filesize": "^10.1.1"
+  }
+}
