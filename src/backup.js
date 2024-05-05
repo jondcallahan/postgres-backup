@@ -1,10 +1,10 @@
-import { exec, execSync } from "child_process";
+import { exec, execSync } from "node:child_process";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
-import { createReadStream, unlink, statSync } from "fs";
+import { createReadStream, unlink, statSync, mkdir } from "node:fs";
 import { filesize } from "filesize";
-import path from "path";
-import os from "os";
+import path from "node:path";
+import os from "node:os";
 import { env } from "./env.js";
 
 const uploadToS3 = async ({ name, path }) => {
@@ -93,13 +93,17 @@ export const backup = async () => {
 
   const now = new Date().toISOString();
   const nestedDate = now.split('T')[0].split('-').join('/');
-  const timestamp = now.split('T')[1].replace(/[:.]+/g, '-');
+  const timestamp = now.split('T')[1].replace(/[:\.]+/g, '-');
   const filename = `${nestedDate}/backup-${timestamp}.tar.gz`;
   const filepath = path.join(os.tmpdir(), filename);
+
+  // Create the directory structure if it doesn't exist
+  const dirname = path.dirname(filepath);
+  await mkdir(dirname, { recursive: true });
 
   await dumpToFile(filepath);
   await uploadToS3({ name: filename, path: filepath });
   await deleteFile(filepath);
 
   console.log("DB backup complete...✅");
-}
+};
