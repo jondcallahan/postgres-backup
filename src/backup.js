@@ -1,7 +1,7 @@
 import { exec, execSync } from "node:child_process";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
-import { createReadStream, unlink, statSync, mkdir } from "node:fs";
+import { createReadStream, unlink, statSync, promises as fs } from "node:fs";
 import { filesize } from "filesize";
 import path from "node:path";
 import os from "node:os";
@@ -99,7 +99,7 @@ export const backup = async () => {
 
   // Create the directory structure if it doesn't exist
   const dirname = path.dirname(filepath);
-  await mkdir(dirname, { recursive: true });
+  await fs.mkdir(dirname, { recursive: true });
 
   await dumpToFile(filepath);
   await uploadToS3({ name: filename, path: filepath });
